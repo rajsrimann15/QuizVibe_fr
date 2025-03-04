@@ -53,13 +53,13 @@ function CreateRoom() {
             socket.emit('start-room', { roomCode, questions });
             navigate(`/admin-room/${roomCode}`);
         } else {
-            setError('Room code is missing or no questions added.');
+            window.alert('Room code is missing or no questions added.');
         }
     };
 
     const addQuestion = () => {
         if (questions.length >= 10) {
-            setError('Maximum 10 questions allowed.');
+            window.alert('Maximum 10 questions allowed.');
             return;
         }
         setQuestions([...questions, { text: '', options: ['', '', '', ''], correctIndex: 0, timer: 10 }]);
