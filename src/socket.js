@@ -16,3 +16,5 @@ socket.on("connect", () => {
 socket.on("connect_error", (error) => {
     console.error(" WebSocket connection error:", error);
 });
+
+console.log("hi");
