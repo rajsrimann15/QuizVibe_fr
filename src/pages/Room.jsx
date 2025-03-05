@@ -14,6 +14,46 @@ function Room() {
     const [scores, setScores] = useState({});
 
     useEffect(() => {
+        // Force Fullscreen
+        const enterFullScreen = () => {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        };
+
+        enterFullScreen();
+
+        // Prevent Tab Switching
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                alert("You cannot leave the quiz!");
+                navigate("/"); // Redirects user if they try to switch tabs
+            }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        // Prevent Resizing
+        const preventResize = () => {
+            window.resizeTo(screen.width, screen.height);
+        };
+
+        window.addEventListener("resize", preventResize);
+
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+            window.removeEventListener("resize", preventResize);
+        };
+    }, [navigate]);
+
+    useEffect(() => {
         socket.emit("get-room-questions", roomCode, (fetchedQuestions) => {
             console.log("Fetched Questions:", fetchedQuestions);
             if (fetchedQuestions?.length) setQuestions(fetchedQuestions);
@@ -65,7 +105,7 @@ function Room() {
             return () => clearInterval(timer);
         }
     }, [currentQuestionIndex, questions]);
-    
+
     const handleNextQuestion = () => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
@@ -114,7 +154,7 @@ function Room() {
     const currentQuestion = questions[currentQuestionIndex] || {}; // Ensure no undefined errors
 
     return (
-        <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }}>
+        <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif", width: "100vw", height: "100vh", overflow: "hidden" }}>
             <h1>Room Code: {roomCode}</h1>
             <h2>Nickname: {nickname}</h2>
 
