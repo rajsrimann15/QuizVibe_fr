@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { socket } from "../socket"; // Ensure this is correctly set
 
 const AdminScorecard = () => {
     const location = useLocation();
     const { roomCode } = useParams();
     const [scores, setScores] = useState({});
+     const navigate = useNavigate();
 
     useEffect(() => {
         // Restore scores from state or localStorage
@@ -51,6 +52,7 @@ const AdminScorecard = () => {
                     ))}
                 </tbody>
             </table>
+            <button onClick={() => navigate("/home")}>Go to Home</button>
         </div>
     );
 };

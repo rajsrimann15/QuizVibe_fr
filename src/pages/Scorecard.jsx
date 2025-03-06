@@ -50,6 +50,7 @@ function Scorecard() {
             ) : (
                 <p>Waiting for all users to complete the quiz...</p>
             )}
+            <button onClick={() => navigate("/home")}>Go to Home</button>
         </div>
     );
 };
