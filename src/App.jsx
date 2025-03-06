@@ -14,7 +14,6 @@ function App() {
 
   return (
     <Router>
-      <NavigationGuard />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
