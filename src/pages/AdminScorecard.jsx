@@ -1,60 +1,38 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { socket } from "../socket"; // Ensure this is correctly set
+import React from "react";
+import { useLocation, useParams } from "react-router-dom";
 
-const AdminScorecard = () => {
-    const location = useLocation();
+function AdminScorecard() {
     const { roomCode } = useParams();
-    const [scores, setScores] = useState({});
-     const navigate = useNavigate();
+    const location = useLocation();
+    const scores = location.state?.scores || {}; // Retrieve scores passed via navigation
 
-    useEffect(() => {
-        // Restore scores from state or localStorage
-        if (location.state?.scores) {
-            setScores(location.state.scores);
-            localStorage.setItem("quizScores", JSON.stringify(location.state.scores));
-        } else {
-            const storedScores = localStorage.getItem("quizScores");
-            if (storedScores) {
-                setScores(JSON.parse(storedScores));
-            }
-        }
-
-        // Listen for live score updates
-        socket.emit("admin-watch-room", { roomCode });
-
-        socket.on("update-scores", (updatedScores) => {
-            setScores(updatedScores);
-            localStorage.setItem("quizScores", JSON.stringify(updatedScores));
-        });
-
-        return () => {
-            socket.off("update-scores");
-        };
-    }, [roomCode, location.state]);
+    // Convert scores object to an array and sort in descending order
+    const sortedScores = Object.entries(scores)
+        .map(([name, score]) => ({ name, score }))
+        .sort((a, b) => b.score - a.score);
 
     return (
-        <div>
-            <h2>Admin Scorecard - Room {roomCode}</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nickname</th>
-                        <th>Score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {Object.entries(scores).map(([nickname, score]) => (
-                        <tr key={nickname}>
-                            <td>{nickname}</td>
-                            <td>{score.toFixed(2)}</td>
-                        </tr>
+        <div className="min-h-screen flex flex-col items-center justify-center text-white p-6">
+            <div className="bg-white text-gray-900 p-6 rounded-2xl shadow-lg w-full max-w-md text-center">
+                <h1 className="text-3xl font-bold mb-4">Final Scorecard</h1>
+                <p className="text-lg font-medium"><strong>Room Code:</strong> {roomCode}</p>
+
+                <h3 className="text-xl font-semibold mt-4 mb-2">Leaderboard:</h3>
+                <ul className="space-y-2">
+                    {sortedScores.map(({ name, score }, index) => (
+                        <li 
+                            key={index} 
+                            className={`p-3 rounded-md ${
+                                index === 0 ? "bg-yellow-300 text-black font-bold" : "bg-gray-200"
+                            }`}
+                        >
+                            {index + 1}. {name}: <strong>{score.toFixed(3)} points</strong>
+                        </li>
                     ))}
-                </tbody>
-            </table>
-            <button onClick={() => navigate("/home")}>Go to Home</button>
+                </ul>
+            </div>
         </div>
     );
-};
+}
 
 export default AdminScorecard;

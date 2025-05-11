@@ -7,13 +7,14 @@ import Room from './pages/Room';
 import AdminRoom from './pages/AdminRoom';
 import Scorecard from './pages/Scorecard';
 import AdminScorecard from './pages/AdminScorecard';
-import NavigationGuard from './pages/NavigationGuard';
+import Header from './pages/Header';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
 
   return (
     <Router>
+      <Header /> 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
